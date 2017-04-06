@@ -1,95 +1,73 @@
-<!DOCTYPE html>
-<html lang="{{ config('app.locale') }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.master')
 
-        <title>Laravel</title>
+@section('title')
+    Welcome to FastFoodGuru!
+@endsection
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+@section('content')
+    <div class="container">
+        <h1>Search</h1>
 
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @if (Auth::check())
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ url('/login') }}">Login</a>
-                        <a href="{{ url('/register') }}">Register</a>
-                    @endif
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
+        {{-- Form returns original page --}}
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Find a fast food restaurant</h3>
+          </div>
+          <div class="panel-body">
+              <form method='GET' action='/'>
+                  <div class="form-group">
+                      <label for='searchTerm'>Chain:</label>
+                      <select class="form-control" name=searchTerm id=searchTerm>
+                          @if($searchTerm)
+                              <option value={{ $searchTerm }}>Select a different restaurant</option>
+                          @else
+                              <option value="">Select a restaurant</option>
+                          @endif
+                          <option>McDonald's</option>
+                          <option value="burger+king">Burger King</option>
+                          <option>KFC</option>
+                          <option value="Boloco">Boloco</option>
+                          <option>Subway</option>
+                          <option value="dunkin+donuts">Dunkin Donuts</option>
+                          <input type="checkbox" name="openNow" value="openNow"
+                            {{ $openNow ? 'checked' : ''}}>Open Now
+                      </select>
+                  </div>
+                  <input type='submit' class='btn btn-primary btn-small'>
+              </form>
+          </div>
         </div>
-    </body>
-</html>
+    </div>
+
+    {{-- Testing location method --}}
+    {{-- @if($position)
+        {{ dump($position->latitude) }}
+        {{ dump($position->longitude) }}
+    @endif --}}
+
+    @if($searchTerm)
+        {{-- {{ dump($searchTerm) }}
+        {{ $searchResultsURL }}
+        {{ dump($searchResultsArray) }} --}}
+    <div class="container">
+        <ul class="list-group">
+            @foreach ($searchResultsArray["results"] as $restaurant)
+                <li class="list-group-item">
+                    @if($restaurant["opening_hours"]["open_now"] == true)
+                        <span class="label label-success">Open Now</span>
+                    @else
+                        <span class="label label-danger">Closed Now</span>
+                    @endif
+                    <h4>{{ $restaurant["formatted_address"] }}</h4>
+                    <p>{{ $restaurant["name"] }}</p>
+                    <a href="#info{{ $restaurant["id"] }}" class="btn btn-info" data-toggle="collapse">Show reviews</a>
+                    <div id="info{{ $restaurant["id"] }}" class="collapse">
+                        No reviews yet! <a href="/restaurant/{{ $restaurant["id"] }}"">Add a review?</a>
+                    </div>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+@endsection

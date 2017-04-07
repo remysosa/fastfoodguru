@@ -32,6 +32,8 @@
                           <input type="checkbox" name="openNow" value="openNow"
                             {{ $openNow ? 'checked' : ''}}>Open Now
                       </select>
+                      <p><label for="limit">Limit # of results to </label>
+                        <input type="text" name="limit" id=limit placeholder={{ is_numeric($limit) ? $limit : ''}}></p>
                   </div>
                   <input type='submit' class='btn btn-primary btn-small'>
               </form>
@@ -51,21 +53,41 @@
         {{ dump($searchResultsArray) }} --}}
     <div class="container">
         <ul class="list-group">
-            @foreach ($searchResultsArray["results"] as $restaurant)
-                <li class="list-group-item">
+            @if ($openNow)
+                @foreach (array_slice($searchResultsArray["results"], 0, $limit) as $restaurant)
                     @if($restaurant["opening_hours"]["open_now"] == true)
-                        <span class="label label-success">Open Now</span>
-                    @else
-                        <span class="label label-danger">Closed Now</span>
+                        <li class="list-group-item">
+                            @if($restaurant["opening_hours"]["open_now"] == true)
+                                <span class="label label-success">Open Now</span>
+                            @else
+                                <span class="label label-danger">Closed Now</span>
+                            @endif
+                            <h4>{{ $restaurant["formatted_address"] }}</h4>
+                            <p>{{ $restaurant["name"] }}</p>
+                            <a href="#info{{ $restaurant["id"] }}" class="btn btn-info" data-toggle="collapse">Show reviews</a>
+                            <div id="info{{ $restaurant["id"] }}" class="collapse">
+                                No reviews yet! <a href="/restaurant/{{ $restaurant["id"] }}"">Add a review?</a>
+                            </div>
+                        </li>
                     @endif
-                    <h4>{{ $restaurant["formatted_address"] }}</h4>
-                    <p>{{ $restaurant["name"] }}</p>
-                    <a href="#info{{ $restaurant["id"] }}" class="btn btn-info" data-toggle="collapse">Show reviews</a>
-                    <div id="info{{ $restaurant["id"] }}" class="collapse">
-                        No reviews yet! <a href="/restaurant/{{ $restaurant["id"] }}"">Add a review?</a>
-                    </div>
-                </li>
-            @endforeach
+                @endforeach
+            @else
+                @foreach ($searchResultsArray["results"] as $restaurant)
+                    <li class="list-group-item">
+                        @if($restaurant["opening_hours"]["open_now"] == true)
+                            <span class="label label-success">Open Now</span>
+                        @else
+                            <span class="label label-danger">Closed Now</span>
+                        @endif
+                        <h4>{{ $restaurant["formatted_address"] }}</h4>
+                        <p>{{ $restaurant["name"] }}</p>
+                        <a href="#info{{ $restaurant["id"] }}" class="btn btn-info" data-toggle="collapse">Show reviews</a>
+                        <div id="info{{ $restaurant["id"] }}" class="collapse">
+                            No reviews yet! <a href="/restaurant/{{ $restaurant["id"] }}"">Add a review?</a>
+                        </div>
+                    </li>
+                @endforeach
+            @endif
         </ul>
     </div>
     @endif

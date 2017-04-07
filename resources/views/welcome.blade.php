@@ -33,7 +33,7 @@
                             {{ $openNow ? 'checked' : ''}}>Open Now
                       </select>
                       <p><label for="limit">Limit # of results to </label>
-                        <input type="text" name="limit" id=limit placeholder={{ is_numeric($limit) ? $limit : ''}}></p>
+                        <input type="text" name="limit" id=limit value={{ is_numeric($limit) ? $limit : ''}}></p>
                   </div>
                   <input type='submit' class='btn btn-primary btn-small'>
               </form>

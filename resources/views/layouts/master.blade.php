@@ -26,9 +26,9 @@
 		@yield('content')
 	</section>
 
-	<div class="navbar navbar-fixed-bottom">
+	<footer>
 		&copy; {{ date('Y') }}
-	</div>
+	</footer>
 
     @stack('body')
 

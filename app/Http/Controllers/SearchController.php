@@ -8,11 +8,19 @@ use Location;
 class SearchController extends Controller
 {
     public function index(Request $request) {
+
+        if(isset($_GET['limit'])) {
+            $this->validate($request, [
+                'limit' => 'numeric|min:0|max:50',
+                ]
+            );
+        }
+
         $position = Location::get();
         $latitude = $position->latitude;
         $longitude = $position->longitude;
         $openNow = $request->input('openNow', null);
-        $limit = $request->input('limit', 50);
+        $limit = $request->input('limit', '50');
 
         $searchTerm = $request->input('searchTerm', null);
         $searchResultsURL = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query='.$searchTerm.'&location='.$latitude.','.$longitude.'&radius=50&key=AIzaSyA61Aa_d3pjQB3aF_Dsj5VoYUbgynrlgk8';

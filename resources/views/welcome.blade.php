@@ -6,7 +6,18 @@
 
 @section('content')
     <div class="container">
-        <h1>Search</h1>
+        @if(count($errors) > 0)
+        <ul>
+            @foreach ($errors->all() as $error)
+                <div class="alert alert-dismissible alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <h4>Error</h4>
+                        <p>{{ $error }}</p>
+                    </div>
+            @endforeach
+        </ul>
+        @endif
+        <h2>Search</h2>
 
         {{-- Form returns original page --}}
         <div class="panel panel-primary">
@@ -21,7 +32,7 @@
                           @if($searchTerm)
                               <option value={{ $searchTerm }}>Select a different restaurant</option>
                           @else
-                              <option value="">Select a restaurant</option>
+                              <option value="">Select a restaurant (Required)</option>
                           @endif
                           <option>McDonald's</option>
                           <option value="burger+king">Burger King</option>
@@ -29,9 +40,11 @@
                           <option value="Boloco">Boloco</option>
                           <option>Subway</option>
                           <option value="dunkin+donuts">Dunkin Donuts</option>
+                          </select>
+
                           <input type="checkbox" name="openNow" value="openNow"
                             {{ $openNow ? 'checked' : ''}}>Open Now
-                      </select>
+
                       <p><label for="limit">Limit # of results to </label>
                         <input type="text" name="limit" id=limit value={{ is_numeric($limit) ? $limit : ''}}></p>
                   </div>
